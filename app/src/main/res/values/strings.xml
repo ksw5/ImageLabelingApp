@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="take_pic">Take a Picture</string>
+    <string name="labeling_info">Image Labeling Loading...</string>
+</resources>
