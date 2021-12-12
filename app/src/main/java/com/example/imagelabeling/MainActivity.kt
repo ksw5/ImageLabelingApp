@@ -15,6 +15,10 @@ import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
+import android.graphics.drawable.BitmapDrawable
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -47,9 +51,11 @@ class MainActivity : AppCompatActivity() {
                     Glide.with(this)
                         .load(it.urls.regular)
                         .into(binding.imageView)
-
+                    analyze()
                 })
+
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,7 +67,6 @@ class MainActivity : AppCompatActivity() {
             val inputForMlkit = InputImage.fromBitmap(imageBitmap, 0)
             //initialize image labeling api
             val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-
             labeler.process(inputForMlkit)
                 .addOnSuccessListener { labels ->
                     // Task completed successfully
@@ -79,30 +84,34 @@ class MainActivity : AppCompatActivity() {
                     // Task failed with an exception
                     Log.e("Kieran", "Error processing")
                 }
-            val randomImage = viewModel.apiResponse.value?.urls?.regular as Bitmap
-            binding.imageView.setImageBitmap(randomImage)
-            val randomInputImage = InputImage.fromBitmap(randomImage, 0)
-            val randomLabeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-            randomLabeler.process(randomInputImage)
-                .addOnSuccessListener { labels ->
-                    Log.i("Kieran", "Successfully proccessed")
-                    var result = ""
-                    for (label in labels) {
-                        result = result + "\n" + label.text + " - " + label.confidence
-                        binding.textView.text = result
-
-                        Log.i("Kieran", result)
-                    }
-
-                }
-                .addOnFailureListener { e ->
-                    // Task failed with an exception
-                    Log.e("Kieran", "Error processing")
-                }
 
         }
 
+    }
 
+    private fun analyze() {
+       if (binding.imageView.getDrawable() != null) {
+           val randomImageBitmap = (binding.imageView.getDrawable() as? BitmapDrawable)?.bitmap
+           binding.imageView.setImageBitmap(randomImageBitmap)
+           val randomInputImage = InputImage.fromBitmap(randomImageBitmap, 0)
+           val randomLabeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+           randomLabeler.process(randomInputImage)
+               .addOnSuccessListener { labels ->
+                   Log.i("Kieran", "Successfully proccessed")
+                   var result = ""
+                   for (label in labels) {
+                       result = result + "\n" + label.text + " - " + label.confidence
+                       binding.textView.text = result
+
+                       Log.i("Kieran", result)
+                   }
+
+               }
+               .addOnFailureListener { e ->
+                   // Task failed with an exception
+                   Log.e("Kieran", "Error processing")
+               }
+       }
 
     }
 
