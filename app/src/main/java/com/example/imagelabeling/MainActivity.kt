@@ -7,6 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.viewModels
+import androidx.core.graphics.createBitmap
+import com.bumptech.glide.Glide
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
@@ -14,7 +18,9 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: ImageViewModel by viewModels()
     val REQUEST_IMAGE_CAPTURE = 1
+
 
     private lateinit var binding: ActivityMainBinding
 
@@ -24,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.button.setOnClickListener {
+        binding.cameraButton.setOnClickListener {
             // launch camera app
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try {
@@ -32,6 +38,17 @@ class MainActivity : AppCompatActivity() {
             } catch (e: ActivityNotFoundException) {
                 // display error state to the user
             }
+        }
+
+        binding.randomButton.setOnClickListener {
+            viewModel.getRandomPhoto()
+            viewModel.apiResponse.observe(this,
+                {
+                    Glide.with(this)
+                        .load(it.urls.regular)
+                        .into(binding.imageView)
+
+                })
         }
     }
 
@@ -62,12 +79,34 @@ class MainActivity : AppCompatActivity() {
                     // Task failed with an exception
                     Log.e("Kieran", "Error processing")
                 }
+            val randomImage = viewModel.apiResponse.value?.urls?.regular as Bitmap
+            binding.imageView.setImageBitmap(randomImage)
+            val randomInputImage = InputImage.fromBitmap(randomImage, 0)
+            val randomLabeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+            randomLabeler.process(randomInputImage)
+                .addOnSuccessListener { labels ->
+                    Log.i("Kieran", "Successfully proccessed")
+                    var result = ""
+                    for (label in labels) {
+                        result = result + "\n" + label.text + " - " + label.confidence
+                        binding.textView.text = result
 
+                        Log.i("Kieran", result)
+                    }
 
+                }
+                .addOnFailureListener { e ->
+                    // Task failed with an exception
+                    Log.e("Kieran", "Error processing")
+                }
 
         }
+
+
 
     }
 
 
 }
+
+
