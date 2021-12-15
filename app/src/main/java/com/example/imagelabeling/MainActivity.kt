@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             takePictureResultLauncher.launch(takePictureIntent)
         }
         binding.randomButton.setOnClickListener {
-            viewModel.getRandomPhoto()
+
             viewModel.apiResponse.observe(this, {
                 Glide.with(this)
                     .asBitmap()
@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     .into(binding.imageView)
 
             })
+            viewModel.getRandomPhoto()
             val imageBitmap = binding.imageView.drawToBitmap()
             val imageForMlKit = InputImage.fromBitmap(imageBitmap, 0)
             detectObject(imageForMlKit)
@@ -63,9 +64,6 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        //val imageDrawable = binding.imageView.setImageDrawable(binding.imageView.drawable)
-        //val imageBitmap = binding.imageView.setImageBitmap(imageDrawable as Bitmap)
-        //val imageBitmap = binding.imageView as Bitmap
 
 
     }
