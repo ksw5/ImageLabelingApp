@@ -26,10 +26,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 
 class MainActivity : AppCompatActivity() {
@@ -41,31 +45,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
         binding.cameraButton.setOnClickListener {
             // launch camera app
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             takePictureResultLauncher.launch(takePictureIntent)
         }
+
         binding.randomButton.setOnClickListener {
             viewModel.getRandomPhoto()
             viewModel.apiResponse.observe(this, {
-                Glide.with(this)
-                    .asBitmap()
-                    .load(it.urls.regular)
-                    .into(binding.imageView)
+                val backgroundImage =
+                    Glide.with(this)
+                        .asBitmap()
+                        .load(it.urls.regular)
+                        .into(binding.imageView)
+                val bitmap = backgroundImage.view.drawToBitmap()
+                //val bitmap = (binding.imageView.getDrawable() as BitmapDrawable).bitmap
+                val imageForMlKit = InputImage.fromBitmap(bitmap, 0)
+                detectObject(imageForMlKit)
 
             })
-            val imageBitmap = binding.imageView.drawToBitmap()
-            val imageForMlKit = InputImage.fromBitmap(imageBitmap, 0)
-            detectObject(imageForMlKit)
-
 
         }
-
-        //val imageDrawable = binding.imageView.setImageDrawable(binding.imageView.drawable)
-        //val imageBitmap = binding.imageView.setImageBitmap(imageDrawable as Bitmap)
-        //val imageBitmap = binding.imageView as Bitmap
 
 
     }
@@ -97,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("Kieran", "Successfully proccessed")
                 var result = ""
                 for (label in labels) {
-                    result = "\n" + result + "\n" + label.text + " - " + label.confidence
+                    result = "\n" + result + "\n" + label.text + "\n" + label.confidence + "\n"
                     binding.textView.text = result
 
                     Log.i("Kieran", result)
