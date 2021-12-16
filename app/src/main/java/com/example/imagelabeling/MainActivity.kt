@@ -20,7 +20,8 @@ import androidx.appcompat.app.AlertDialog
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.view.drawToBitmap
-
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 
 class MainActivity : AppCompatActivity() {
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("Kieran", "Successfully proccessed")
                 var result = ""
                 for (label in labels) {
-                    result = "\n" + result + "\n" + label.text + " - " + label.confidence
+                    result = "\n" + result + "\n" + label.text + " - " + (label.confidence * 100).roundToInt() + "%"
                     binding.textView.text = result
 
                     Log.i("Kieran", result)

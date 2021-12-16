@@ -37,32 +37,6 @@ interface ApiRequest {
         perPage: Int
     ): Image
 
-    /*@GET("photos/random")
-    fun getRandomPhotos(@Query("category") categoryId: Int?,
-                        @Query("featured") featured: Boolean?,
-                        @Query("username") username: String,
-                        @Query("query") query: String,
-                        @Query("orientation") orientation: String,
-                        @Query("count") count: Int): Call<List<Photos>>*/
-
-  /*@GET("/photos/random?")
-    fun getRandomImages(
-        @Query("count") count: String = "30",
-        @Query("client_id") client_id: String = API_KEY
-    ): Call<List<Image>>*/
-
-    /*@Headers("Accept-Version: v1", "Authorization: Client-ID $CLIENT_ID")
-    @GET("search/photos")
-    suspend fun searchPhotos(
-        @Query("query")
-        query: String,
-        @Query("page")
-        page: Int,
-        @Query("per_page")
-        perPage: Int
-    ): UnsplashResponse*/
-
-
 }
 
 object PhotoApi {
