@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Image Labeling</string>
     <string name="take_pic">Take a Picture</string>
     <string name="labeling_info">Image Labeling Loading...</string>
     <string name="random_pic">Random Picture</string>
+    <string name="analyze_pic">Analyze</string>
 </resources>

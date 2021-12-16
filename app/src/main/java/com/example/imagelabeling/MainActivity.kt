@@ -18,6 +18,7 @@ import android.graphics.drawable.BitmapDrawable
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.view.drawToBitmap
 
 
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             takePictureResultLauncher.launch(takePictureIntent)
         }
+
         binding.randomButton.setOnClickListener {
             viewModel.getRandomPhoto()
             viewModel.apiResponse.observe(this, {
@@ -45,8 +47,16 @@ class MainActivity : AppCompatActivity() {
                     .load(it.urls.regular)
                     .into(binding.imageView)
             })
-            //detecting objects on previous image
-            imageCheck(binding.imageView)
+        }
+
+        binding.analyzeButton.setOnClickListener {
+            if (binding.imageView.drawable == null) {
+                Toast.makeText(this@MainActivity,
+                    "Please take a picture or click for a random picture first",
+                    Toast.LENGTH_SHORT).show()
+            } else {
+                imageCheck(binding.imageView)
+            }
         }
     }
 
@@ -108,7 +118,6 @@ class MainActivity : AppCompatActivity() {
         val matrix = Matrix().apply { postRotate(degrees) }
         return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
     }
-
 }
 
 
