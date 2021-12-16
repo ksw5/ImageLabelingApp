@@ -31,6 +31,6 @@ Build System : [Gradle](https://gradle.org/)
 
 ## Demo
 
-|<img src="mlkit_screenshot2.png" width=200/>|<img src="mlkit_screenshot.png" width=200/>|
+|<img src="mlkit_screenshot4.png" width=200/>|<img src="mlkit_screenshot.png" width=200/>|
 
 
