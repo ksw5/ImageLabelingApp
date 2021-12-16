@@ -1,35 +1,25 @@
 package com.example.imagelabeling
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.core.graphics.createBitmap
 import com.bumptech.glide.Glide
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import android.graphics.drawable.BitmapDrawable
-import android.util.AttributeSet
-import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import android.graphics.drawable.Drawable
-import android.net.Uri
+import android.widget.ImageView
 import androidx.core.view.drawToBitmap
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,24 +38,25 @@ class MainActivity : AppCompatActivity() {
             takePictureResultLauncher.launch(takePictureIntent)
         }
         binding.randomButton.setOnClickListener {
-
+            viewModel.getRandomPhoto()
             viewModel.apiResponse.observe(this, {
                 Glide.with(this)
                     .asBitmap()
                     .load(it.urls.regular)
                     .into(binding.imageView)
-
             })
-            viewModel.getRandomPhoto()
-            val imageBitmap = binding.imageView.drawToBitmap()
-            val imageForMlKit = InputImage.fromBitmap(imageBitmap, 0)
-            detectObject(imageForMlKit)
-
-
+            //detecting objects on previous image
+            imageCheck(binding.imageView)
         }
+    }
 
-
-
+    fun imageCheck(imageView: ImageView) {
+        if (imageView != null) {
+            val bitmap: Bitmap = binding.imageView.drawToBitmap()
+            binding.imageView.setImageBitmap(bitmap)
+            val imageForMlKit = InputImage.fromBitmap(bitmap, 0)
+            detectObject(imageForMlKit)
+        }
     }
 
 
